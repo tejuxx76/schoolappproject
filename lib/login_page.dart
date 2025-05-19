@@ -4,6 +4,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'student_page.dart';
 import 'teacher_page.dart';
+// Import these if pages exist
+// import 'parent_page.dart';
+// import 'hod_page.dart';
+// import 'admin_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -18,8 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   Future<void> _login() async {
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       _showErrorDialog('Please enter both email and password.');
@@ -32,29 +36,53 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://your-server-address/login.php'),
+        Uri.parse('http://your-server-address/login.php'), // Replace with your actual PHP path
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({'email': email, 'password': password}),
       );
 
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && data['success'] == true) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('role', data['role']);
+        await prefs.setString('user_id', data['user_id'].toString());
+        await prefs.setString('name', data['name']);
 
-        if (data['role'] == 'Student') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const StudentPage()),
-          );
-        } else if (data['role'] == 'Teacher') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const TeacherPage()),
-          );
-        } else {
-          _showErrorDialog('Role not recognized.');
+        // Navigate to respective dashboard based on role
+        switch (data['role']) {
+          case 'Student':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const StudentPage()),
+            );
+            break;
+          case 'Teacher':
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const TeacherPage()),
+            );
+            break;
+          // case 'Parent':
+          //   Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute(builder: (_) => const ParentPage()),
+          //   );
+          //   break;
+          // case 'HOD':
+          //   Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute(builder: (_) => const HODPage()),
+          //   );
+          //   break;
+          // case 'Admin':
+          //   Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute(builder: (_) => const AdminPage()),
+          //   );
+          //   break;
+          default:
+            _showErrorDialog('Unknown role: ${data['role']}');
         }
       } else {
         _showErrorDialog(data['message'] ?? 'Login failed.');
@@ -93,9 +121,10 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
+        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

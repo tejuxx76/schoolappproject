@@ -32,7 +32,7 @@ class TeacherPage extends StatelessWidget {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text(e.toString()),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
@@ -42,58 +42,97 @@ class TeacherPage extends StatelessWidget {
     }
   }
 
+  Widget buildCard({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 48, color: Colors.green[700]),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Teacher Dashboard'),
       ),
-      body: ListView(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.check_box),
-            title: const Text('Take Attendance'),
-            onTap: () => fetchAndShowData(context, 'attendance/read.php', 'Attendance Records'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.note),
-            title: const Text('Upload Notes/Lectures'),
-            onTap: () {
-              // Placeholder for upload UI
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('Upload Notes'),
-                  content: const Text('Upload feature coming soon!'),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
-                  ],
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.chat),
-            title: const Text('Chat with Students/Parents'),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('Chat Feature'),
-                  content: const Text('Chat feature coming soon!'),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
-                  ],
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.schedule),
-            title: const Text('View Timetable'),
-            onTap: () => fetchAndShowData(context, 'timetable/read.php', 'Class Timetable'),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1,
+          children: [
+            buildCard(
+              icon: Icons.check_box,
+              title: 'Take Attendance',
+              onTap: () => fetchAndShowData(context, 'attendance/read.php', 'Attendance Records'),
+            ),
+            buildCard(
+              icon: Icons.note,
+              title: 'Upload Notes/Lectures',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Upload Notes'),
+                    content: const Text('Upload feature coming soon!'),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+                    ],
+                  ),
+                );
+              },
+            ),
+            buildCard(
+              icon: Icons.chat,
+              title: 'Chat with Students/Parents',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Chat Feature'),
+                    content: const Text('Chat feature coming soon!'),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+                    ],
+                  ),
+                );
+              },
+            ),
+            buildCard(
+              icon: Icons.schedule,
+              title: 'View Timetable',
+              onTap: () => fetchAndShowData(context, 'timetable/read.php', 'Class Timetable'),
+            ),
+          ],
+        ),
       ),
     );
   }

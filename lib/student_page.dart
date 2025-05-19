@@ -1,14 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'screens/attendance_screen.dart';  // Adjust the path as per your folder structure
+import 'screens/attendance_screen.dart';  // Adjust path as needed
 import 'screens/marks_screen.dart';
 import 'screens/timetable_screen.dart';
 import 'screens/fees_screen.dart';
 import 'screens/result_screen.dart';
-
-
-
 
 class StudentPage extends StatelessWidget {
   const StudentPage({super.key});
@@ -41,7 +38,7 @@ class StudentPage extends StatelessWidget {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text(e.toString()),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
@@ -53,94 +50,111 @@ class StudentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A helper function to build cards to reduce repetition
+    Widget buildCard({required IconData icon, required String title, required VoidCallback onTap, Color? color}) {
+      return Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          splashColor: Colors.blue.withAlpha(30),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 48, color: color ?? Theme.of(context).primaryColor),
+                const SizedBox(height: 15),
+                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Student Dashboard'),
+        centerTitle: true,
+        elevation: 2,
       ),
-      body: ListView(
-        children: [
-          ListTile(
-  leading: const Icon(Icons.assignment),
-  title: const Text('View Attendance'),
-  onTap: () {
-    // Navigate to AttendanceScreen instead of showing JSON dialog
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AttendanceScreen(studentId: 1)),  
-    );
-  },
-),
-
-          ListTile(
-  leading: const Icon(Icons.grade),
-  title: const Text('View Marks'),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MarksScreen(studentId: 101), // use real student ID dynamically
-      ),
-    );
-  },
-),
-
-          ListTile(
-  leading: const Icon(Icons.schedule),
-  title: const Text('View Timetable'),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => TimetableScreen(studentId: 101), // use actual student ID
-      ),
-    );
-  },
-),
-
-          ListTile(
-  leading: const Icon(Icons.attach_money),
-  title: const Text('Fee Details'),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => FeesScreen(studentId: 101), // Replace with real student ID
-      ),
-    );
-  },
-),
-
-          ListTile(
-            leading: const Icon(Icons.chat),
-            title: const Text('Chat with Teachers'),
-            onTap: () {
-              // This can open a chat screen or show a message for now
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('Chat Feature'),
-                  content: const Text('Chat feature coming soon!'),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
-                  ],
-                ),
-              );
-            },
-          ),
-          ListTile(
-  leading: const Icon(Icons.school),
-  title: const Text('Results'),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ResultsScreen(studentId: 101), // Replace with actual ID
-      ),
-    );
-  },
-),
-
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          children: [
+            buildCard(
+              icon: Icons.assignment,
+              title: 'View Attendance',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AttendanceScreen(studentId: 1)),
+                );
+              },
+            ),
+            buildCard(
+              icon: Icons.grade,
+              title: 'View Marks',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => MarksScreen(studentId: 101)),
+                );
+              },
+            ),
+            buildCard(
+              icon: Icons.schedule,
+              title: 'View Timetable',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => TimetableScreen(studentId: 101)),
+                );
+              },
+            ),
+            buildCard(
+              icon: Icons.attach_money,
+              title: 'Fee Details',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => FeesScreen(studentId: 101)),
+                );
+              },
+            ),
+            buildCard(
+              icon: Icons.chat,
+              title: 'Chat with Teachers',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Chat Feature'),
+                    content: const Text('Chat feature coming soon!'),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+                    ],
+                  ),
+                );
+              },
+            ),
+            buildCard(
+              icon: Icons.school,
+              title: 'Results',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ResultsScreen(studentId: 101)),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

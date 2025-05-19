@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'student_page.dart';
 import 'teacher_page.dart';
+import 'staff_page.dart';
+import 'hod_principal_page.dart';
 import 'login_page.dart';
 
 void main() {
@@ -54,6 +56,28 @@ class RoleSelector extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const TeacherPage()),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.badge),
+              label: const Text("Staff Dashboard"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const StaffPage()),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.account_balance),
+              label: const Text("HOD/Principal Dashboard"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HodPrincipalPage()),
                 );
               },
             ),
