@@ -11,23 +11,35 @@ class StaffPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Helper function for card creation
-    Widget buildCard({required IconData icon, required String title, required VoidCallback onTap, Color? color}) {
+    Widget buildDashboardCard({
+      required IconData icon,
+      required String label,
+      required Color color,
+      required VoidCallback onTap,
+    }) {
       return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        color: color,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
           onTap: onTap,
-          splashColor: Colors.deepPurple.withAlpha(30),
-          child: Container(
-            padding: const EdgeInsets.all(20),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 48, color: color ?? Colors.deepPurple),
-                const SizedBox(height: 15),
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Icon(icon, size: 48, color: Colors.white),
+                const SizedBox(height: 12),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           ),
@@ -39,6 +51,8 @@ class StaffPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Staff Dashboard'),
         centerTitle: true,
+        //backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.indigo,
         elevation: 2,
       ),
       body: Padding(
@@ -47,36 +61,61 @@ class StaffPage extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
+          childAspectRatio: 1,
           children: [
-            buildCard(
+            buildDashboardCard(
               icon: Icons.note_add,
-              title: 'Upload Notes',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UploadNotesScreen())),
+              label: 'Upload Notes',
+              color: Colors.indigo,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const UploadNotesScreen()),
+              ),
             ),
-            buildCard(
+            buildDashboardCard(
               icon: Icons.video_library,
-              title: 'Upload Lectures',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UploadLecturesScreen())),
+              label: 'Upload Lectures',
+              color: Colors.green,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const UploadLecturesScreen()),
+              ),
             ),
-            buildCard(
+            buildDashboardCard(
               icon: Icons.chat,
-              title: 'Chat',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatScreen())),
+              label: 'Chat',
+              color: Colors.orange,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ChatScreen()),
+              ),
             ),
-            buildCard(
+            buildDashboardCard(
               icon: Icons.calendar_today,
-              title: 'Timetable',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TimetableScreen())),
+              label: 'Timetable',
+              color: Colors.purple,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TimetableScreen()),
+              ),
             ),
-            buildCard(
+            buildDashboardCard(
               icon: Icons.monetization_on,
-              title: 'Salary Details',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SalaryDetailsScreen())),
+              label: 'Salary Details',
+              color: Colors.teal,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SalaryDetailsScreen()),
+              ),
             ),
-            buildCard(
+            buildDashboardCard(
               icon: Icons.beach_access,
-              title: 'Leave Request',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LeaveRequestScreen())),
+              label: 'Leave Request',
+              color: Colors.redAccent,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LeaveRequestScreen()),
+              ),
             ),
           ],
         ),

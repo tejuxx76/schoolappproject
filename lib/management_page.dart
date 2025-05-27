@@ -9,7 +9,12 @@ class ManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Management Dashboard')),
+      appBar: AppBar(
+        title: const Text('Management Dashboard'),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent,
+        elevation: 2,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.count(
@@ -20,17 +25,29 @@ class ManagementPage extends StatelessWidget {
             DashboardCard(
               title: 'Fee Details',
               icon: Icons.attach_money,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagementFeeScreen())),
+              color: Colors.green,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ManagementFeeScreen()),
+              ),
             ),
             DashboardCard(
               title: 'Salary Overview',
               icon: Icons.money,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagementSalaryScreen())),
+              color: Colors.deepOrange,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ManagementSalaryScreen()),
+              ),
             ),
             DashboardCard(
               title: 'College Overview',
               icon: Icons.school,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CollegeOverviewScreen())),
+              color: Colors.blue,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CollegeOverviewScreen()),
+              ),
             ),
           ],
         ),
@@ -42,13 +59,21 @@ class ManagementPage extends StatelessWidget {
 class DashboardCard extends StatelessWidget {
   final String title;
   final IconData icon;
+  final Color color;
   final VoidCallback onTap;
 
-  const DashboardCard({super.key, required this.title, required this.icon, required this.onTap});
+  const DashboardCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: color,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
@@ -58,9 +83,16 @@ class DashboardCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 48, color: Colors.blueAccent),
+              Icon(icon, size: 48, color: Colors.white),
               const SizedBox(height: 12),
-              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
         ),

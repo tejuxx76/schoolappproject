@@ -1,32 +1,54 @@
+//login page code
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// Import your dashboards here
 import 'student_page.dart';
 import 'teacher_page.dart';
-// Import these if pages exist
-// import 'parent_page.dart';
-// import 'hod_page.dart';
-// import 'admin_page.dart';
+import 'staff_page.dart';
+import 'parent_page.dart';
+import 'hod_principal_page.dart';
+import 'management_page.dart';
+import 'admin.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  final List<String> roles = [
+    'Student',
+    'Teacher',
+    'Staff',
+    'Parent',
+    'HOD',
+    'Principal',
+    'Management',
+    'Admin',
+  ];
+
+  String? _selectedRole;
+
   bool _isLoading = false;
 
   Future<void> _login() async {
+    final String fullName = _fullNameController.text.trim();
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
+    final String? role = _selectedRole;
 
-    if (email.isEmpty || password.isEmpty) {
-      _showErrorDialog('Please enter both email and password.');
+    if (fullName.isEmpty || email.isEmpty || password.isEmpty || role == null) {
+      _showDialog('Please fill in all fields and select a role');
       return;
     }
 
@@ -35,60 +57,59 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
+      // Adjust API payload as needed
       final response = await http.post(
-        Uri.parse('http://your-server-address/login.php'), // Replace with your actual PHP path
+        Uri.parse('http://localhost/school_app_prj/api/auth/login.php'),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({
+          'full_name': fullName,
+          'email': email,
+          'password': password,
+          'role': role,
+        }),
       );
 
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && data['success'] == true) {
+      if (data['status'] == true) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('role', data['role']);
         await prefs.setString('user_id', data['user_id'].toString());
         await prefs.setString('name', data['name']);
+        await prefs.setString('role', data['role']);
 
-        // Navigate to respective dashboard based on role
-        switch (data['role']) {
+        String roleFromServer = data['role'];
+
+        switch (roleFromServer) {
           case 'Student':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const StudentPage()),
-            );
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const StudentPage()));
             break;
           case 'Teacher':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const TeacherPage()),
-            );
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const TeacherPage()));
             break;
-          // case 'Parent':
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (_) => const ParentPage()),
-          //   );
-          //   break;
-          // case 'HOD':
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (_) => const HODPage()),
-          //   );
-          //   break;
-          // case 'Admin':
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (_) => const AdminPage()),
-          //   );
-          //   break;
+          case 'Staff':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const StaffPage()));
+            break;
+          case 'Parent':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ParentPage()));
+            break;
+          case 'HOD':
+          case 'Principal':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HodPrincipalPage()));
+            break;
+          case 'Management':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ManagementPage()));
+            break;
+          case 'Admin':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AdminPage()));
+            break;
           default:
-            _showErrorDialog('Unknown role: ${data['role']}');
+            _showDialog('Unknown role: $roleFromServer');
         }
       } else {
-        _showErrorDialog(data['message'] ?? 'Login failed.');
+        _showDialog(data['message'] ?? 'Login failed');
       }
     } catch (e) {
-      _showErrorDialog('An error occurred. Please try again.');
+      _showDialog('Error: ${e.toString()}');
     } finally {
       setState(() {
         _isLoading = false;
@@ -96,23 +117,19 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _showErrorDialog(String message) {
+  void _showDialog(String message) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
+      builder: (_) => AlertDialog(
+        title: const Text('Login'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          )
+        ],
+      ),
     );
   }
 
@@ -122,37 +139,102 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login'),
         centerTitle: true,
+        backgroundColor: Colors.deepPurple,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.lock_outline, size: 80, color: Colors.deepPurple),
+              const SizedBox(height: 32),
+
+              // Full Name
+              TextField(
+                controller: _fullNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
+                ),
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+
+              // Email
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 24),
-            _isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: const Text('Login'),
+              const SizedBox(height: 16),
+
+              // Password
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Role Dropdown
+              InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Select Role',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.work),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedRole,
+                    isExpanded: true,
+                    hint: const Text('Choose your role'),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedRole = newValue;
+                      });
+                    },
+                    items: roles
+                        .map((role) => DropdownMenuItem<String>(
+                              value: role,
+                              child: Text(role),
+                            ))
+                        .toList(),
                   ),
-          ],
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Login button or loading indicator
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );

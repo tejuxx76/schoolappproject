@@ -14,6 +14,9 @@ class HodPrincipalPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('HOD/Principal Dashboard'),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
+        elevation: 2,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,6 +28,7 @@ class HodPrincipalPage extends StatelessWidget {
             DashboardCard(
               title: 'Approve Leaves',
               icon: Icons.check_circle,
+              color: Colors.teal,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ApproveLeavesScreen()),
@@ -33,6 +37,7 @@ class HodPrincipalPage extends StatelessWidget {
             DashboardCard(
               title: 'View Reports',
               icon: Icons.bar_chart,
+              color: Colors.orangeAccent,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ViewReportsScreen()),
@@ -41,6 +46,7 @@ class HodPrincipalPage extends StatelessWidget {
             DashboardCard(
               title: 'Chat',
               icon: Icons.chat,
+              color: Colors.purple,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ChatScreen()),
@@ -49,6 +55,7 @@ class HodPrincipalPage extends StatelessWidget {
             DashboardCard(
               title: 'Manage Timetable',
               icon: Icons.schedule,
+              color: Colors.indigo,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ManageTimetableScreen()),
@@ -57,6 +64,7 @@ class HodPrincipalPage extends StatelessWidget {
             DashboardCard(
               title: 'Staff Attendance',
               icon: Icons.assignment_turned_in,
+              color: Colors.green,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const StaffAttendanceScreen()),
@@ -65,6 +73,7 @@ class HodPrincipalPage extends StatelessWidget {
             DashboardCard(
               title: 'Salary Overview',
               icon: Icons.attach_money,
+              color: Colors.deepOrange,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const SalaryOverviewScreen()),
@@ -80,18 +89,21 @@ class HodPrincipalPage extends StatelessWidget {
 class DashboardCard extends StatelessWidget {
   final String title;
   final IconData icon;
+  final Color color;
   final VoidCallback onTap;
 
   const DashboardCard({
     super.key,
     required this.title,
     required this.icon,
+    required this.color,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: color,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
@@ -101,11 +113,15 @@ class DashboardCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 48, color: Colors.deepPurple),
+              Icon(icon, size: 48, color: Colors.white),
               const SizedBox(height: 12),
               Text(
                 title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),

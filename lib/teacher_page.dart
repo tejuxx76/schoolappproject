@@ -1,85 +1,56 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'screens/teacher_screen/teacher_attendance_screen.dart';
+import 'screens/teacher_screen/teacher_upload_notes_screen.dart';
+import 'screens/teacher_screen/teacher_chat_screen.dart';
+import 'screens/teacher_screen/teacher_timetable_screen.dart';
 
 class TeacherPage extends StatelessWidget {
   const TeacherPage({super.key});
 
-  final String baseUrl = 'http://localhost/school_app/api/teacher';
-  // Use IP instead of localhost if testing on real device
-
-  Future<void> fetchAndShowData(BuildContext context, String apiEndpoint, String title) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/$apiEndpoint'));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text(title),
-            content: SingleChildScrollView(
-              child: Text(const JsonEncoder.withIndent('  ').convert(data)),
+  @override
+  Widget build(BuildContext context) {
+    Widget buildDashboardCard({
+      required IconData icon,
+      required String label,
+      required Color color,
+      required VoidCallback onTap,
+    }) {
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        color: color,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 50, color: Colors.white),
+                const SizedBox(height: 15),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
-            ],
           ),
-        );
-      } else {
-        throw Exception('Failed to load $title');
-      }
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Error'),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
-          ],
         ),
       );
     }
-  }
 
-  Widget buildCard({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 48, color: Colors.green[700]),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Teacher Dashboard'),
+        centerTitle: true,
+        backgroundColor: Colors.indigo,
+        elevation: 2,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -89,47 +60,57 @@ class TeacherPage extends StatelessWidget {
           mainAxisSpacing: 16,
           childAspectRatio: 1,
           children: [
-            buildCard(
+            buildDashboardCard(
               icon: Icons.check_box,
-              title: 'Take Attendance',
-              onTap: () => fetchAndShowData(context, 'attendance/read.php', 'Attendance Records'),
-            ),
-            buildCard(
-              icon: Icons.note,
-              title: 'Upload Notes/Lectures',
+              label: 'Take Attendance',
+              color: Colors.teal,
               onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Upload Notes'),
-                    content: const Text('Upload feature coming soon!'),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
-                    ],
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TeacherAttendanceScreen(),
                   ),
                 );
               },
             ),
-            buildCard(
+            buildDashboardCard(
+              icon: Icons.upload_file,
+              label: 'Upload Notes / Lectures',
+              color: Colors.indigo,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TeacherUploadNotesScreen(),
+                  ),
+                );
+              },
+            ),
+            buildDashboardCard(
               icon: Icons.chat,
-              title: 'Chat with Students/Parents',
+              label: 'Chat with Students / Parents',
+              color: Colors.deepOrange,
               onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Chat Feature'),
-                    content: const Text('Chat feature coming soon!'),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
-                    ],
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TeacherChatScreen(),
                   ),
                 );
               },
             ),
-            buildCard(
+            buildDashboardCard(
               icon: Icons.schedule,
-              title: 'View Timetable',
-              onTap: () => fetchAndShowData(context, 'timetable/read.php', 'Class Timetable'),
+              label: 'View Timetable',
+              color: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TeacherTimetableScreen(),
+                  ),
+                );
+              },
             ),
           ],
         ),

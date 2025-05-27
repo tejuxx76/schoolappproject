@@ -9,7 +9,12 @@ class ParentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Parent Dashboard')),
+      appBar: AppBar(
+        title: const Text('Parent Dashboard'),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
+        elevation: 2,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.count(
@@ -20,17 +25,29 @@ class ParentPage extends StatelessWidget {
             DashboardCard(
               title: 'Results',
               icon: Icons.assignment,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ParentResultsScreen())),
+              color: Colors.deepPurple,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ParentResultsScreen()),
+              ),
             ),
             DashboardCard(
               title: 'Attendance',
               icon: Icons.check_circle_outline,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ParentAttendanceScreen())),
+              color: Colors.orange,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ParentAttendanceScreen()),
+              ),
             ),
             DashboardCard(
               title: 'Chat',
               icon: Icons.chat,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ParentChatScreen())),
+              color: Colors.indigo,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ParentChatScreen()),
+              ),
             ),
           ],
         ),
@@ -42,13 +59,21 @@ class ParentPage extends StatelessWidget {
 class DashboardCard extends StatelessWidget {
   final String title;
   final IconData icon;
+  final Color color;
   final VoidCallback onTap;
 
-  const DashboardCard({super.key, required this.title, required this.icon, required this.onTap});
+  const DashboardCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: color,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
@@ -58,9 +83,16 @@ class DashboardCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 48, color: Colors.teal),
+              Icon(icon, size: 48, color: Colors.white),
               const SizedBox(height: 12),
-              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
         ),
