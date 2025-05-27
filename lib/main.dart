@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'student_page.dart';
 import 'teacher_page.dart';
@@ -6,7 +7,7 @@ import 'hod_principal_page.dart';
 import 'login_page.dart';
 import 'management_page.dart';
 import 'parent_page.dart';
-import 'admin.dart';
+import 'admin.dart'; // ✅ Keep this import
 
 void main() {
   runApp(const MyApp());

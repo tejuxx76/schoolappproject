@@ -1,5 +1,3 @@
-//login page code
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -38,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
   ];
 
   String? _selectedRole;
-
   bool _isLoading = false;
 
   Future<void> _login() async {
@@ -57,7 +54,6 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // Adjust API payload as needed
       final response = await http.post(
         Uri.parse('http://localhost/school_app_prj/api/auth/login.php'),
         headers: {"Content-Type": "application/json"},
@@ -229,7 +225,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: const Text(
                           'Login',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black, 
+                          ),
                         ),
                       ),
                     ),
