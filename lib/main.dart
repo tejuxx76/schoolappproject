@@ -7,7 +7,7 @@ import 'hod_principal_page.dart';
 import 'login_page.dart';
 import 'management_page.dart';
 import 'parent_page.dart';
-import 'admin.dart'; // ✅ Keep this import
+import 'admin.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         fontFamily: 'Roboto',
       ),
-      home: const LoginPage(), // 👈 Start from Login Page
+      home: const LoginPage(), 
       debugShowCheckedModeBanner: false,
     );
   }
